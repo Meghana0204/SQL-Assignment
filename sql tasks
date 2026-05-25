@@ -1,0 +1,94 @@
+use food_delivery_system;
+---Task 1
+CREATE TABLE mst_restaurant (
+    restaurant_id INT IDENTITY(1,1) NOT NULL,
+    restaurant_name VARCHAR(100) NOT NULL,
+    cuisine_type VARCHAR(100),
+    city VARCHAR(100),
+    rating DECIMAL(2,1),
+    created_on DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_by VARCHAR(100) DEFAULT 'system',
+    updated_on DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_by VARCHAR(100) DEFAULT 'system',
+    is_active BIT DEFAULT 1,
+    PRIMARY KEY (restaurant_id)
+);
+
+select * from mst_restaurant;
+
+CREATE TABLE tbl_customer (
+    customer_id INT IDENTITY(1,1) NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50),
+    phone_number VARCHAR(15),
+    restaurant_id INT,
+    created_on DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_by VARCHAR(100) DEFAULT 'system',
+    updated_on DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_by VARCHAR(100) DEFAULT 'system',
+    is_active BIT DEFAULT 1,
+    PRIMARY KEY (customer_id),
+    FOREIGN KEY (restaurant_id)
+    REFERENCES mst_restaurant(restaurant_id)
+);
+
+INSERT INTO mst_restaurant
+(restaurant_name, cuisine_type, city, rating, created_by, updated_by)
+VALUES
+('Pizza Hub', 'Italian', 'Bangalore', 4.5, 'admin', 'admin'),
+('Spicy Kitchen', 'Indian', 'Mysore', 4.2, 'admin', 'admin'),
+('Burger Point', 'Fast Food', 'Chennai', 4.0, 'admin', 'admin'),
+('Food Adda', 'Fast Food', 'kerala', 4.4, 'admin', 'admin'),
+('Olive', 'French', 'Chennai', 4.3, 'admin', 'admin');
+
+INSERT INTO tbl_customer
+(first_name, last_name, phone_number, restaurant_id, created_by, updated_by)
+VALUES
+('Meghana', 'Pradeep', '9876543210', 1, 'admin', 'admin'),
+('Rahul', 'Kumar', '9123456780', 1, 'admin', 'admin'),
+('Ananya', 'Sharma', '9988776655', 2, 'admin', 'admin'),
+('Vikram', 'Singh', '9876501234', 3, 'admin', 'admin'),
+('Arjun', 'Reddy', '9988776650', 5, 'admin', 'admin');
+
+SELECT * FROM mst_restaurant
+WHERE is_active = 1;
+
+SELECT * FROM tbl_customer
+WHERE is_active = 1;
+
+UPDATE tbl_customer
+SET
+    phone_number = '9999999999',
+    updated_on = CURRENT_TIMESTAMP,
+    updated_by = 'admin'
+WHERE customer_id = 1;
+
+UPDATE tbl_customer
+SET
+    is_active = 0,
+    updated_on = CURRENT_TIMESTAMP,
+    updated_by = 'admin'
+WHERE customer_id = 1;
+
+select * from tbl_customer
+where customer_id = 1;
+
+SELECT * FROM mst_restaurant
+ORDER BY restaurant_name ASC;
+
+SELECT * FROM mst_restaurant
+ORDER BY rating DESC;
+
+SELECT * FROM mst_restaurant
+WHERE restaurant_name LIKE 'P%';
+
+SELECT * FROM mst_restaurant
+WHERE city = 'Bangalore'
+AND rating > 4.0;
+
+SELECT * FROM mst_restaurant
+WHERE city = 'Bangalore'
+OR city = 'Mysore';
+
+SELECT * FROM tbl_customer
+WHERE restaurant_id = 1;
