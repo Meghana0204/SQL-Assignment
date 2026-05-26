@@ -1,35 +1,35 @@
 use food_delivery_system;
 ---Task 1
 CREATE TABLE mst_restaurant (
-    restaurant_id INT IDENTITY(1,1) NOT NULL,
-    restaurant_name VARCHAR(100) NOT NULL,
-    cuisine_type VARCHAR(100),
-    city VARCHAR(100),
-    rating DECIMAL(2,1),
-    created_on DATETIME DEFAULT CURRENT_TIMESTAMP,
-    created_by VARCHAR(100) DEFAULT 'system',
-    updated_on DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_by VARCHAR(100) DEFAULT 'system',
-    is_active BIT DEFAULT 1,
-    PRIMARY KEY (restaurant_id)
+restaurant_id INT IDENTITY(1,1) NOT NULL,
+restaurant_name VARCHAR(100) NOT NULL,
+cuisine_type VARCHAR(100),
+city VARCHAR(100),
+rating DECIMAL(2,1),
+created_on DATETIME DEFAULT CURRENT_TIMESTAMP,
+created_by VARCHAR(100) DEFAULT 'system',
+updated_on DATETIME DEFAULT CURRENT_TIMESTAMP,
+updated_by VARCHAR(100) DEFAULT 'system',
+is_active BIT DEFAULT 1,
+PRIMARY KEY (restaurant_id)
 );
 
 select * from mst_restaurant;
 
 CREATE TABLE tbl_customer (
-    customer_id INT IDENTITY(1,1) NOT NULL,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50),
-    phone_number VARCHAR(15),
-    restaurant_id INT,
-    created_on DATETIME DEFAULT CURRENT_TIMESTAMP,
-    created_by VARCHAR(100) DEFAULT 'system',
-    updated_on DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_by VARCHAR(100) DEFAULT 'system',
-    is_active BIT DEFAULT 1,
-    PRIMARY KEY (customer_id),
-    FOREIGN KEY (restaurant_id)
-    REFERENCES mst_restaurant(restaurant_id)
+customer_id INT IDENTITY(1,1) NOT NULL,
+first_name VARCHAR(50) NOT NULL,
+last_name VARCHAR(50),
+phone_number VARCHAR(15),
+restaurant_id INT,
+created_on DATETIME DEFAULT CURRENT_TIMESTAMP,
+created_by VARCHAR(100) DEFAULT 'system',
+updated_on DATETIME DEFAULT CURRENT_TIMESTAMP,
+updated_by VARCHAR(100) DEFAULT 'system',
+is_active BIT DEFAULT 1,
+PRIMARY KEY (customer_id),
+FOREIGN KEY (restaurant_id)
+REFERENCES mst_restaurant(restaurant_id)
 );
 
 INSERT INTO mst_restaurant
@@ -58,16 +58,16 @@ WHERE is_active = 1;
 
 UPDATE tbl_customer
 SET
-    phone_number = '9999999999',
-    updated_on = CURRENT_TIMESTAMP,
-    updated_by = 'admin'
+phone_number = '9999999999',
+updated_on = CURRENT_TIMESTAMP,
+updated_by = 'admin'
 WHERE customer_id = 1;
 
 UPDATE tbl_customer
 SET
-    is_active = 0,
-    updated_on = CURRENT_TIMESTAMP,
-    updated_by = 'admin'
+is_active = 0,
+updated_on = CURRENT_TIMESTAMP,
+updated_by = 'admin'
 WHERE customer_id = 1;
 
 select * from tbl_customer
@@ -99,50 +99,50 @@ WHERE restaurant_id = 1;
 
 -----Task 2
 CREATE TABLE mst_menu (
-    menu_id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-    restaurant_id INT,
-    item_name VARCHAR(100),
-    price DECIMAL(10,2),
-    created_on DATETIME DEFAULT CURRENT_TIMESTAMP,
-    created_by VARCHAR(100) DEFAULT 'system',
-    updated_on DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_by VARCHAR(100) DEFAULT 'system',
-    is_active BIT DEFAULT 1,
-    FOREIGN KEY (restaurant_id)
-    REFERENCES mst_restaurant(restaurant_id)
+menu_id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+restaurant_id INT,
+item_name VARCHAR(100),
+price DECIMAL(10,2),
+created_on DATETIME DEFAULT CURRENT_TIMESTAMP,
+created_by VARCHAR(100) DEFAULT 'system',
+updated_on DATETIME DEFAULT CURRENT_TIMESTAMP,
+updated_by VARCHAR(100) DEFAULT 'system',
+is_active BIT DEFAULT 1,
+FOREIGN KEY (restaurant_id)
+REFERENCES mst_restaurant(restaurant_id)
 );
 
 CREATE TABLE tbl_orders (
-    order_id INT IDENTITY(1,1) NOT NULL,
-    customer_id INT,
-    menu_id INT,
-    quantity INT,
-    total_amount DECIMAL(10,2),
-    created_on DATETIME DEFAULT CURRENT_TIMESTAMP,
-    created_by VARCHAR(100) DEFAULT 'system',
-    updated_on DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_by VARCHAR(100) DEFAULT 'system',
-    is_active BIT DEFAULT 1,
-    PRIMARY KEY (order_id),
-    FOREIGN KEY (customer_id)
-    REFERENCES tbl_customer(customer_id),
-    FOREIGN KEY (menu_id)
-    REFERENCES mst_menu(menu_id)
+order_id INT IDENTITY(1,1) NOT NULL,
+customer_id INT,
+menu_id INT,
+quantity INT,
+total_amount DECIMAL(10,2),
+created_on DATETIME DEFAULT CURRENT_TIMESTAMP,
+created_by VARCHAR(100) DEFAULT 'system',
+updated_on DATETIME DEFAULT CURRENT_TIMESTAMP,
+updated_by VARCHAR(100) DEFAULT 'system',
+is_active BIT DEFAULT 1,
+PRIMARY KEY (order_id),
+FOREIGN KEY (customer_id)
+REFERENCES tbl_customer(customer_id),
+FOREIGN KEY (menu_id)
+REFERENCES mst_menu(menu_id)
 );
 
 CREATE TABLE tbl_payment (
-    payment_id INT IDENTITY(1,1) NOT NULL,
-    order_id INT,
-    payment_method VARCHAR(50),
-    payment_status VARCHAR(50),
-    created_on DATETIME DEFAULT CURRENT_TIMESTAMP,
-    created_by VARCHAR(100) DEFAULT 'system',
-    updated_on DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_by VARCHAR(100) DEFAULT 'system',
-    is_active BIT DEFAULT 1,
-    PRIMARY KEY (payment_id),
-    FOREIGN KEY (order_id)
-    REFERENCES tbl_orders(order_id)
+payment_id INT IDENTITY(1,1) NOT NULL,
+order_id INT,
+payment_method VARCHAR(50),
+payment_status VARCHAR(50),
+created_on DATETIME DEFAULT CURRENT_TIMESTAMP,
+created_by VARCHAR(100) DEFAULT 'system',
+updated_on DATETIME DEFAULT CURRENT_TIMESTAMP,
+updated_by VARCHAR(100) DEFAULT 'system',
+is_active BIT DEFAULT 1,
+PRIMARY KEY (payment_id),
+FOREIGN KEY (order_id)
+REFERENCES tbl_orders(order_id)
 );
 
 INSERT INTO mst_menu
@@ -171,38 +171,38 @@ SELECT * FROM mst_menu
 ORDER BY price ASC;
 
 SELECT
-    first_name,
-    last_name,
-    phone_number,
-    COUNT(*) AS duplicate_count
+first_name,
+last_name,
+phone_number,
+COUNT(*) AS duplicate_count
 FROM tbl_customer
 GROUP BY
-    first_name,
-    last_name,
-    phone_number
+first_name,
+last_name,
+phone_number
 HAVING COUNT(*) > 1;
 
 WITH DuplicateCustomers AS
 (
-    SELECT *,
-    ROW_NUMBER() OVER (
-        PARTITION BY first_name, last_name, phone_number
-        ORDER BY customer_id
-    ) AS row_num
-    FROM tbl_customer
+SELECT *,
+ROW_NUMBER() OVER (
+PARTITION BY first_name, last_name, phone_number
+ORDER BY customer_id
+) AS row_num
+FROM tbl_customer
 )
 
 DELETE FROM DuplicateCustomers
 WHERE row_num > 1;
 
 SELECT
-    c.first_name,
-    r.restaurant_name,
-    m.item_name,
-    o.quantity,
-    o.total_amount,
-    p.payment_method,
-    p.payment_status
+c.first_name,
+r.restaurant_name,
+m.item_name,
+o.quantity,
+o.total_amount,
+p.payment_method,
+p.payment_status
 FROM tbl_customer c
 INNER JOIN mst_restaurant r
 ON c.restaurant_id = r.restaurant_id
@@ -224,13 +224,13 @@ SELECT * FROM tbl_payment
 WHERE is_active = 1;
 
 SELECT
-    c.first_name,
-    r.restaurant_name,
-    m.item_name,
-    o.quantity,
-    o.total_amount,
-    p.payment_method,
-    p.payment_status
+c.first_name,
+r.restaurant_name,
+m.item_name,
+o.quantity,
+o.total_amount,
+p.payment_method,
+p.payment_status
 FROM tbl_customer c
 LEFT JOIN mst_restaurant r
 ON c.restaurant_id = r.restaurant_id
@@ -261,13 +261,13 @@ VALUES
 (6, 'UPI', 'Paid');
 
 SELECT
-    c.first_name,
-    r.restaurant_name,
-    m.item_name,
-    o.quantity,
-    o.total_amount,
-    p.payment_method,
-    p.payment_status
+c.first_name,
+r.restaurant_name,
+m.item_name,
+o.quantity,
+o.total_amount,
+p.payment_method,
+p.payment_status
 FROM tbl_customer c
 LEFT JOIN mst_restaurant r
 ON c.restaurant_id = r.restaurant_id
@@ -280,8 +280,8 @@ ON o.order_id = p.order_id
 WHERE c.is_active = 1;
 
 SELECT
-    c.first_name,
-    r.restaurant_name
+c.first_name,
+r.restaurant_name
 FROM tbl_customer c
 INNER JOIN mst_restaurant r
 ON c.restaurant_id = r.restaurant_id
@@ -293,7 +293,7 @@ AS
 BEGIN
 SET NOCOUNT ON;
 SELECT first_name,
-       last_name
+last_name
 from tbl_customer
 where  restaurant_id = @restaurant_id and is_active = 1;
 end;
