@@ -304,4 +304,198 @@ exec usp_GetActiveCustomersByrestaurantid @restaurant_id = 1;
 
 
 
+------Task 3
+SELECT
+c.first_name,
+r.restaurant_name,
+m.item_name
+FROM tbl_customer c
+INNER JOIN mst_restaurant r
+ON c.restaurant_id = r.restaurant_id
+INNER JOIN tbl_orders o
+ON c.customer_id = o.customer_id
+INNER JOIN mst_menu m
+ON o.menu_id = m.menu_id;
+
+
+SELECT
+c.first_name,
+o.order_id
+FROM tbl_customer c
+LEFT JOIN tbl_orders o
+ON c.customer_id = o.customer_id;
+
+SELECT
+c.first_name,
+o.order_id
+FROM tbl_customer c
+RIGHT JOIN tbl_orders o
+ON c.customer_id = o.customer_id;
+
+
+SELECT
+c.first_name,
+o.order_id
+FROM tbl_customer c
+FULL JOIN tbl_orders o
+ON c.customer_id = o.customer_id;
+SELECT
+A.first_name AS Customer1,
+B.first_name AS Customer2
+FROM tbl_customer A
+INNER JOIN tbl_customer B
+ON A.restaurant_id = B.restaurant_id
+AND A.customer_id != B.customer_id;
+
+SELECT
+c.first_name,
+r.restaurant_name
+FROM tbl_customer c
+CROSS JOIN mst_restaurant r;
+
+CREATE PROCEDURE usp_GetCustomerOrders
+AS
+BEGIN
+SET NOCOUNT ON;
+SELECT
+c.first_name,
+m.item_name,
+o.quantity,
+o.total_amount
+FROM tbl_customer c
+INNER JOIN tbl_orders o
+ON c.customer_id = o.customer_id
+INNER JOIN mst_menu m
+ON o.menu_id = m.menu_id;
+END;
+
+exec usp_GetCustomerOrders;
+
+
+CREATE PROCEDURE usp_InsertCustomer
+@first_name VARCHAR(50),
+@last_name VARCHAR(50),
+@phone_number VARCHAR(15),
+@restaurant_id INT
+AS
+BEGIN
+SET NOCOUNT ON;
+INSERT INTO tbl_customer
+(
+first_name,
+last_name,
+phone_number,
+restaurant_id
+)
+VALUES
+(
+@first_name,
+@last_name,
+@phone_number,
+@restaurant_id
+);
+END;
+
+EXEC usp_InsertCustomer
+@first_name = 'Vikram',
+@last_name = 'R',
+@phone_number = '9998887776',
+@restaurant_id = 2;
+
+CREATE PROCEDURE usp_DeleteCustomer
+@customer_id INT
+AS
+BEGIN
+SET NOCOUNT ON;
+UPDATE tbl_customer
+SET
+is_active = 0, updated_on = CURRENT_TIMESTAMP
+WHERE customer_id = @customer_id;
+END;
+
+CREATE TYPE CustomerType AS TABLE
+(
+first_name VARCHAR(50),
+last_name VARCHAR(50),
+phone_number VARCHAR(15),
+restaurant_id INT
+);
+
+
+CREATE PROCEDURE usp_InsertBulkCustomers
+@CustomerData CustomerType READONLY
+AS
+BEGIN
+SET NOCOUNT ON;
+INSERT INTO tbl_customer
+(
+first_name,
+last_name,
+phone_number,
+restaurant_id
+)
+SELECT
+first_name,
+last_name,
+phone_number,
+restaurant_id
+FROM @CustomerData;
+END;
+
+DECLARE @CustomerRecords CustomerType;
+INSERT INTO @CustomerRecords
+VALUES
+('Arjun', 'K', '9000000001', 1),
+('Vikram', 'S', '9000000002', 2);
+EXEC usp_InsertBulkCustomers @CustomerRecords;
+
+
+CREATE TABLE tbl_ErrorLog (
+errorlog_id INT IDENTITY(1,1) PRIMARY KEY,
+error_message VARCHAR(MAX),
+error_procedure VARCHAR(200),
+error_line INT,
+error_date DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE PROCEDURE usp_InsertOrder
+@customer_id INT,
+@menu_id INT,
+@quantity INT,
+@total_amount DECIMAL(10,2)
+AS
+BEGIN
+SET NOCOUNT ON;
+BEGIN TRY
+BEGIN TRANSACTION;
+INSERT INTO tbl_orders
+(
+customer_id,menu_id,quantity,total_amount
+)
+VALUES
+(
+@customer_id,
+@menu_id,
+@quantity,
+@total_amount
+);
+COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+ROLLBACK TRANSACTION;
+INSERT INTO tbl_ErrorLog
+(
+error_message,
+error_procedure,
+error_line
+)
+VALUES
+(
+ERROR_MESSAGE(),
+ERROR_PROCEDURE(),
+ERROR_LINE()
+);
+END CATCH
+END;
+
 
